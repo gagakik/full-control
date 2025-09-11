@@ -33,12 +33,32 @@ const initializeDatabase = async () => {
       id SERIAL PRIMARY KEY,
       username VARCHAR(255) UNIQUE NOT NULL,
       password VARCHAR(255) NOT NULL,
+      role VARCHAR(50) DEFAULT 'admin',
       created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
     );
   `;
+
+  // Add role column if it doesn't exist
+  const addRoleColumnQuery = `
+    ALTER TABLE users 
+    ADD COLUMN IF NOT EXISTS role VARCHAR(50) DEFAULT 'admin';
+  `;
   try {
     await pool.query(userTableQuery);
+    await pool.query(addRoleColumnQuery);
     console.log('User table created successfully or already exists.');
+
+    // Create default admin user if no users exist
+    const existingUsers = await pool.query('SELECT COUNT(*) FROM users');
+    if (existingUsers.rows[0].count === '0') {
+      const bcrypt = require('bcryptjs');
+      const hashedPassword = await bcrypt.hash('admin', 12);
+      await pool.query(
+        'INSERT INTO users (username, password, role) VALUES ($1, $2, $3)',
+        ['admin', hashedPassword, 'admin']
+      );
+      console.log('Default admin user created (username: admin, password: admin)');
+    }
   } catch (err) {
     console.error('Error initializing database:', err);
   }

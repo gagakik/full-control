@@ -22,7 +22,6 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-
 // Token verification middleware
 const authenticateToken = (req, res, next) => {
   const authHeader = req.headers['authorization'];
@@ -41,7 +40,6 @@ const authenticateToken = (req, res, next) => {
   });
 };
 
-
 // Authorization middleware
 const authorizeRoles = (...roles) => {
   return (req, res, next) => {
@@ -52,6 +50,112 @@ const authorizeRoles = (...roles) => {
   };
 };
 
+// Registration endpoint
+app.post('/api/register', async (req, res) => {
+  try {
+    const { username, password } = req.body;
+
+    if (!username || !password) {
+      return res.status(400).json({ message: 'მომხმარებლის სახელი და პაროლი სავალდებულოა' });
+    }
+
+    // Check if user already exists
+    const existingUser = await db.query('SELECT * FROM users WHERE username = $1', [username]);
+    if (existingUser.rows.length > 0) {
+      return res.status(400).json({ message: 'მომხმარებელი ამ სახელით უკვე არსებობს' });
+    }
+
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, 12);
+
+    // Create user with default role 'user'
+    const result = await db.query(
+      'INSERT INTO users (username, password, role, created_at) VALUES ($1, $2, $3, CURRENT_TIMESTAMP) RETURNING id, username, role, created_at',
+      [username, hashedPassword, 'user']
+    );
+
+    res.status(201).json({ 
+      message: 'მომხმარებელი წარმატებით შეიქმნა',
+      user: result.rows[0]
+    });
+  } catch (error) {
+    console.error('რეგისტრაციის შეცდომა:', error);
+    res.status(500).json({ message: 'რეგისტრაცია ვერ მოხერხდა' });
+  }
+});
+
+// Login endpoint
+app.post('/api/login', async (req, res) => {
+  try {
+    const { username, password } = req.body;
+
+    if (!username || !password) {
+      return res.status(400).json({ message: 'მომხმარებლის სახელი და პაროლი სავალდებულოა' });
+    }
+
+    // Find user
+    const result = await db.query('SELECT * FROM users WHERE username = $1', [username]);
+    if (result.rows.length === 0) {
+      return res.status(401).json({ message: 'არასწორი მომხმარებლის სახელი ან პაროლი' });
+    }
+
+    const user = result.rows[0];
+
+    // Check password
+    const isValidPassword = await bcrypt.compare(password, user.password);
+    if (!isValidPassword) {
+      return res.status(401).json({ message: 'არასწორი მომხმარებლის სახელი ან პაროლი' });
+    }
+
+    // Generate JWT token
+    const token = jwt.sign(
+      { id: user.id, username: user.username, role: user.role },
+      process.env.JWT_SECRET || 'fallback_secret',
+      { expiresIn: '24h' }
+    );
+
+    res.json({
+      message: 'წარმატებული ავტორიზაცია',
+      token,
+      user: {
+        id: user.id,
+        username: user.username,
+        role: user.role,
+        created_at: user.created_at
+      }
+    });
+  } catch (error) {
+    console.error('ავტორიზაციის შეცდომა:', error);
+    res.status(500).json({ message: 'ავტორიზაცია ვერ მოხერხდა' });
+  }
+});
+
+// Token verification endpoint
+app.get('/api/verify-token', authenticateToken, (req, res) => {
+  res.json({
+    message: 'Token მოქმედია',
+    user: req.user
+  });
+});
+
+// Profile endpoint
+app.get('/api/profile', authenticateToken, async (req, res) => {
+  try {
+    const result = await db.query(
+      'SELECT id, username, role, created_at FROM users WHERE id = $1',
+      [req.user.id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: 'მომხმარებელი ვერ მოიძებნა' });
+    }
+
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error('პროფილის მიღების შეცდომა:', error);
+    res.status(500).json({ message: 'პროფილის მიღება ვერ მოხერხდა' });
+  }
+});
 
 // User management routes
 app.get('/api/users', authenticateToken, authorizeRoles('admin'), async (req, res) => {
