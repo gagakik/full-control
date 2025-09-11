@@ -224,7 +224,7 @@ function App() {
           <Box sx={{ flexGrow: 1 }} />
           
           {/* Header buttons */}
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             {/* Admin Panel button - only for admins */}
             {user?.role === 'admin' && (
               <Button
@@ -239,6 +239,7 @@ function App() {
             
             {/* Profile menu */}
             <IconButton
+              sx={{ marginRight: 3, display: { xs: 'none', sm: 'flex' } }}
               color="inherit"
               onClick={(e) => setAnchorEl(e.currentTarget)}
             >
