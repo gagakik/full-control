@@ -36,32 +36,45 @@ const initializeDatabase = async () => {
       role VARCHAR(50) DEFAULT 'admin' CHECK (role IN ('admin', 'manager', 'sales', 'marketing', 'operator', 'operation', 'finance', 'hr', 'support')),
       created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
     );
-  `;
 
-  // Add role column if it doesn't exist
-  const addRoleColumnQuery = `
-    ALTER TABLE users 
-    ADD COLUMN IF NOT EXISTS role VARCHAR(50) DEFAULT 'admin';
-  `;
-  try {
-    await pool.query(userTableQuery);
-    await pool.query(addRoleColumnQuery);
-    console.log('User table created successfully or already exists.');
-
-    // Create default admin user if no users exist
-    const existingUsers = await pool.query('SELECT COUNT(*) FROM users');
-    if (existingUsers.rows[0].count === '0') {
-      const bcrypt = require('bcryptjs');
-      const hashedPassword = await bcrypt.hash('admin', 12);
-      await pool.query(
-        'INSERT INTO users (username, password, role) VALUES ($1, $2, $3)',
-        ['admin', hashedPassword, 'admin']
+      CREATE TABLE IF NOT EXISTS spaces_exhebition (
+        id SERIAL PRIMARY KEY,
+        building_name VARCHAR(255) NOT NULL,
+        description TEXT,
+        area_sqm DECIMAL(10,2) DEFAULT 0,
+		    ceiling_height DECIMAL(10,2) DEFAULT 0,
+        created_by_user_id INTEGER,
+        updated_by_user_id INTEGER,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
-      console.log('Default admin user created (username: admin, password: admin)');
-    }
-  } catch (err) {
-    console.error('Error initializing database:', err);
-  }
+
+	    CREATE TABLE IF NOT EXISTS spaces_parking (
+        id SERIAL PRIMARY KEY,
+        building_name VARCHAR(255) NOT NULL,
+        description TEXT,
+        number_of_seats DECIMAL(10,2) DEFAULT 0,
+        created_by_user_id INTEGER,
+        updated_by_user_id INTEGER,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+
+	  	CREATE TABLE IF NOT EXISTS spaces_rent (
+        id SERIAL PRIMARY KEY,
+        building_name VARCHAR(255) NOT NULL,
+		    spaces_name VARCHAR(255),
+        description TEXT,
+        area_sqm DECIMAL(10,2) DEFAULT 0,
+		    electricity_subscriber_number DECIMAL DEFAULT 0,
+		    water_subscriber_number DECIMAL DEFAULT 0,
+		    gas_subscriber_number DECIMAL DEFAULT 0,
+        created_by_user_id INTEGER,
+        updated_by_user_id INTEGER,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+  `;
 };
 
 const query = (text, params) => pool.query(text, params);
