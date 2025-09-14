@@ -9,7 +9,7 @@ function MainContent({ user, onAdminPanelClick }) {
     <Box sx={{ 
       width: '100%',
       minHeight: 'calc(100vh - 64px)', // Full height minus header
-      backgroundColor: '#f5f5f5',
+      backgroundColor: '#2a3b41be',
       py: 4
     }}>
       <Container maxWidth={false} sx={{ px: { xs: 2, sm: 3, md: 4 }, }}>
