@@ -164,21 +164,6 @@ function ExhibitionSpaces({ onBack }) {
             </CardContent>
           </Card>
         </Grid>
-        <Grid item xs={12} md={4}>
-          <Card>
-            <CardContent>
-              <Typography variant="h6" color="text.secondary">
-                საშუალო ფართობი
-              </Typography>
-              <Typography variant="h4">
-                {spaces.length > 0 
-                  ? (spaces.reduce((sum, space) => sum + (parseFloat(space.area_sqm) || 0), 0) / spaces.length).toFixed(1)
-                  : 0
-                } მ²
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
       </Grid>
 
       <Paper sx={{ p: 2 }}>

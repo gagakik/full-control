@@ -175,32 +175,7 @@ function RentSpaces({ onBack }) {
             </CardContent>
           </Card>
         </Grid>
-        <Grid item xs={12} md={3}>
-          <Card>
-            <CardContent>
-              <Typography variant="h6" color="info.main">
-                ელექტრო აბონენტები
-              </Typography>
-              <Typography variant="h4">
-                {spaces.filter(space => space.electricity_subscriber_number > 0).length}
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid item xs={12} md={3}>
-          <Card>
-            <CardContent>
-              <Typography variant="h6" color="success.main">
-                წყლის აბონენტები
-              </Typography>
-              <Typography variant="h4">
-                {spaces.filter(space => space.water_subscriber_number > 0).length}
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
       </Grid>
-
       <Paper sx={{ p: 2 }}>
         <TableContainer>
           <Table>

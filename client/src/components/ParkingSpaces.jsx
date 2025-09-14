@@ -164,21 +164,6 @@ function ParkingSpaces({ onBack }) {
             </CardContent>
           </Card>
         </Grid>
-        <Grid item xs={12} md={4}>
-          <Card>
-            <CardContent>
-              <Typography variant="h6" color="text.secondary">
-                საშუალო ადგილები
-              </Typography>
-              <Typography variant="h4">
-                {spaces.length > 0 
-                  ? Math.round(spaces.reduce((sum, space) => sum + (parseInt(space.number_of_seats) || 0), 0) / spaces.length)
-                  : 0
-                }
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
       </Grid>
 
       <Paper sx={{ p: 2 }}>

@@ -129,24 +129,6 @@ function SpacesOverview() {
             {/* Statistics Cards */}
             <Grid container spacing={3} sx={{ mb: 4 }}>
               <Grid item xs={12} sm={6} md={3}>
-                <Card sx={{ bgcolor: 'primary.main', color: 'white' }}>
-                  <CardContent>
-                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                      <Box>
-                        <Typography variant="h4" component="div">
-                          {statistics.total}
-                        </Typography>
-                        <Typography variant="body2">
-                          სულ სივრცეები
-                        </Typography>
-                      </Box>
-                      <TrendingUp sx={{ fontSize: 40, opacity: 0.7 }} />
-                    </Box>
-                  </CardContent>
-                </Card>
-              </Grid>
-
-              <Grid item xs={12} sm={6} md={3}>
                 <Card sx={{ bgcolor: 'secondary.main', color: 'white' }}>
                   <CardContent>
                     <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -198,49 +180,6 @@ function SpacesOverview() {
                     </Box>
                   </CardContent>
                 </Card>
-              </Grid>
-            </Grid>
-
-            {/* Recent Spaces */}
-            <Grid container spacing={3}>
-              <Grid item xs={12} md={8}>
-                <Paper sx={{ p: 3 }}>
-                  <Typography variant="h6" gutterBottom>
-                    სივრცეების განაწილება
-                  </Typography>
-                  <Grid container spacing={2}>
-                    <Grid item xs={4}>
-                      <Box sx={{ textAlign: 'center' }}>
-                        <Typography variant="h3" color="secondary.main">
-                          {statistics.exhibition}
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary">
-                          გამოფენა
-                        </Typography>
-                      </Box>
-                    </Grid>
-                    <Grid item xs={4}>
-                      <Box sx={{ textAlign: 'center' }}>
-                        <Typography variant="h3" color="info.main">
-                          {statistics.parking}
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary">
-                          პარკინგი
-                        </Typography>
-                      </Box>
-                    </Grid>
-                    <Grid item xs={4}>
-                      <Box sx={{ textAlign: 'center' }}>
-                        <Typography variant="h3" color="success.main">
-                          {statistics.rent}
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary">
-                          ქირავნობა
-                        </Typography>
-                      </Box>
-                    </Grid>
-                  </Grid>
-                </Paper>
               </Grid>
             </Grid>
           </>

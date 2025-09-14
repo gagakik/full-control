@@ -12,7 +12,7 @@ function MainContent({ user, onAdminPanelClick }) {
       backgroundColor: '#f5f5f5',
       py: 4
     }}>
-      <Container maxWidth={false} sx={{ px: { xs: 2, sm: 3, md: 4 } }}>
+      <Container maxWidth={false} sx={{ px: { xs: 2, sm: 3, md: 4 }, }}>
         <Grid container spacing={3}>
           {/* Additional content sections can be added here */}
           <Grid item xs={12} md={6}>
@@ -21,9 +21,12 @@ function MainContent({ user, onAdminPanelClick }) {
             </Card>
           </Grid>
 
-          <Grid item xs={12} md={6}>
-            <Card elevation={1}>
-              <CardContent>
+          <Grid item xs={12} md={6} sx={{ display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+            alignItems: 'center' }}>
+            <Card elevation={1} sx={{ maxWidth: 250, boxShadow: '3px 3px 6px #868d8dff', borderRadius: 3, width: '100%', '&:hover': {boxShadow: '5px 5px 10px #868d8dff'}}}>
+              <CardContent sx={{ textAlign: 'center'}}>
                 <Typography variant="h6" gutterBottom color="primary">
                   სისტემის სტატუსი
                 </Typography>
@@ -37,7 +40,7 @@ function MainContent({ user, onAdminPanelClick }) {
             </Card>
           </Grid>
           <Grid item xs={12} md={6}>
-            <Card elevation={1}>
+            <Card elevation={1} sx={{ maxWidth: 250,boxShadow: '3px 3px 6px #868d8dff', borderRadius: 3, width: '100%', '&:hover': {boxShadow: '5px 5px 10px #868d8dff'}}}>
               <CardContent>
                 <Typography variant="h6" gutterBottom color="primary">
                   მხარდაჭერა
