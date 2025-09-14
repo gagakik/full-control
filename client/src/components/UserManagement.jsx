@@ -112,6 +112,7 @@ function UserManagement({ onStatsUpdate }) {
                     >
                       <option value="user">User</option>
                       <option value="admin">Admin</option>
+                      <option value="manager">Manager</option>
                     </select>
                   ) : (
                     <span className={`role-badge ${user.role}`}>

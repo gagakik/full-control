@@ -157,6 +157,10 @@ app.get('/api/profile', authenticateToken, async (req, res) => {
   }
 });
 
+// Import and use spaces routes
+const spacesRoutes = require('./routes/spaces');
+app.use('/api/spaces', spacesRoutes);
+
 // User management routes
 app.get('/api/users', authenticateToken, authorizeRoles('admin'), async (req, res) => {
   try {
