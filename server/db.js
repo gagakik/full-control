@@ -26,30 +26,42 @@ pool.on("error", (err) => {
   console.error("PostgreSQL კავშირის შეცდომა:", err);
 });
 
-const initializeDatabase = async () => {
-  // SQL to create tables
-  const userTableQuery = `
-    CREATE TABLE IF NOT EXISTS users (
-      id SERIAL PRIMARY KEY,
-      username VARCHAR(255) UNIQUE NOT NULL,
-      password VARCHAR(255) NOT NULL,
-      role VARCHAR(50) DEFAULT 'admin' CHECK (role IN ('admin', 'manager', 'sales', 'marketing', 'operator', 'operation', 'finance', 'hr', 'support')),
-      created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-    );
+// Promise wrapper for database queries
+const query = (text, params) => pool.query(text, params);
 
+const initializeDatabase = async () => {
+  try {
+    console.log("PostgreSQL ცხრილების შექმნის დაწყება...");
+
+    // Users table
+    await query(`
+      CREATE TABLE IF NOT EXISTS users (
+        id SERIAL PRIMARY KEY,
+        username VARCHAR(255) UNIQUE NOT NULL,
+        password VARCHAR(255) NOT NULL,
+        role VARCHAR(50) DEFAULT 'admin',
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    // Spaces_exhebition table
+    await query(`
       CREATE TABLE IF NOT EXISTS spaces_exhebition (
         id SERIAL PRIMARY KEY,
         building_name VARCHAR(255) NOT NULL,
         description TEXT,
         area_sqm DECIMAL(10,2) DEFAULT 0,
-		    ceiling_height DECIMAL(10,2) DEFAULT 0,
+        ceiling_height DECIMAL(10,2) DEFAULT 0,
         created_by_user_id INTEGER,
         updated_by_user_id INTEGER,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      );
+      )
+    `);
 
-	    CREATE TABLE IF NOT EXISTS spaces_parking (
+    // Spaces_parking table
+    await query(`
+      CREATE TABLE IF NOT EXISTS spaces_parking (
         id SERIAL PRIMARY KEY,
         building_name VARCHAR(255) NOT NULL,
         description TEXT,
@@ -58,29 +70,36 @@ const initializeDatabase = async () => {
         updated_by_user_id INTEGER,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      );
+      )
+    `);
 
-	  	CREATE TABLE IF NOT EXISTS spaces_rent (
+    // Spaces_rent table
+    await query(`
+      CREATE TABLE IF NOT EXISTS spaces_rent (
         id SERIAL PRIMARY KEY,
         building_name VARCHAR(255) NOT NULL,
-		    spaces_name VARCHAR(255),
+        spaces_name VARCHAR(255),
         description TEXT,
         area_sqm DECIMAL(10,2) DEFAULT 0,
-		    electricity_subscriber_number DECIMAL DEFAULT 0,
-		    water_subscriber_number DECIMAL DEFAULT 0,
-		    gas_subscriber_number DECIMAL DEFAULT 0,
+        electricity_subscriber_number DECIMAL DEFAULT 0,
+        water_subscriber_number DECIMAL DEFAULT 0,
+        gas_subscriber_number DECIMAL DEFAULT 0,
         created_by_user_id INTEGER,
         updated_by_user_id INTEGER,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      );
-  `;
+      )
+    `);
+
+    console.log("PostgreSQL ცხრილები წარმატებით შეიქმნა!");
+  } catch (error) {
+    console.error("PostgreSQL ცხრილების შექმნის შეცდომა:", error);
+    throw error;
+  }
 };
 
-const query = (text, params) => pool.query(text, params);
-
-// Here is the fix: You need to export the functions
 module.exports = {
-  initializeDatabase,
   query,
+  pool,
+  initializeDatabase,
 };
